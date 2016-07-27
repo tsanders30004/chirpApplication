@@ -1,0 +1,39 @@
+body {
+     font-family: Verdana;
+}
+.purple {
+     background-color: #C713FE;
+}
+.blue {
+     background-color: #4A90E2;
+}
+.dark_gray {
+     background-color: #9B9B9B;
+}
+.light_gray {
+     background-color: #DEDEDE;
+}
+
+
+.purple_text {
+     color: #C713FE;
+}
+.blue_text {
+     color: #4A90E2;
+}
+.dark_gray_text {
+     color: #9B9B9B;
+}
+.light_gray_text {
+     color: #DEDEDE;
+}
+
+
+
+
+div {
+     border: 1px dotted #DDDDDD;
+}
+.container {
+     margin: auto;
+}
