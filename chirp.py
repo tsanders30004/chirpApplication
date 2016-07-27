@@ -18,6 +18,40 @@ def timeline():
     query1 = db.query("select chirper_id, chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
     return render_template('timeline.html', title='Timeline', profile_rows=query1.namedresult(), timeline_rows=query1.namedresult())
 
+@app.route('/login')
+def login():
+    return render_template(
+    'login.html',
+    title='Login')
+
+@app.route('/check_pw', methods=['POST'])
+def check_password():
+    userid = request.form['userid']
+    print 'this user tried to login: ' + userid
+
+    sql = "select * from users where handle = '" + userid + "';"
+    query = db.query(sql)
+    print query.namedresult()
+    print len(query.namedresult())
+
+    if len(query.namedresult()) == 1:
+        session['userid'] = userid
+        return redirect('/profile')
+    else:
+        print "userid and/or password is not correct.  please try again"
+        return redirect('/login')
+
+    # try:
+    #     session['userid'] = userid
+    #     # return render_template('proj_summary.html', title='Login Status', userdata=query.namedresult())
+    #     return redirect('/profile')
+    # except Exception, e:
+    #     print traceback.format_exc()
+    #     return "Error %s" % traceback.format_exc()
+
+
+
+
 # ------------------------------------------------------------------------------------------------- #
 # @app.route('/add', methods=['POST'])
 # def add():
@@ -65,7 +99,7 @@ def timeline():
 #
 #     return redirect('/')
 
-
+app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
 
 app.debug = True
 
