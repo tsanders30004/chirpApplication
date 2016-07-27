@@ -1,5 +1,6 @@
 body {
      font-family: Verdana;
+     background-color: #DEDEDE;
 }
 .purple {
      background-color: #C713FE;
@@ -36,4 +37,10 @@ div {
 }
 .container {
      margin: auto;
+}
+.width_100 {
+     width: 100%;
+}
+.bold {
+     font-weight: bold;
 }
