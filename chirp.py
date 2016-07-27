@@ -9,8 +9,14 @@ app = Flask('MyApp')
 
 @app.route('/profile')
 def profile():
-    query1 = db.query("select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where user_id=1;")
-    query2 = db.query("select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where chirper_id = 1 order by chirp_date desc;")
+
+    # query1 = db.query("select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where user_id=1;")
+    sql1 = "select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where handle='" + session['userid'] + "'"
+    print sql1
+    query1 = db.query(sql1)
+
+    sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
+    query2 = db.query(sql2)
     return render_template('profile.html', title='Profile', profile_rows=query1.namedresult(), chirp_rows=query2.namedresult())
 
 @app.route('/timeline')
