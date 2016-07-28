@@ -23,8 +23,15 @@ def profile():
 
     # query1 = db.query("select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where user_id=1;")
     sql1 = "select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where handle='" + session['userid'] + "'"
-    print sql1
+
     query1 = db.query(sql1)
+    print "postgreSQL..."
+    print sql1
+    print query1
+    print query1.namedresult()
+    print query1.dictresult()[0]['handle']
+    # new_userid = query.dictresult()[0]['id']
+
 
     sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
     query2 = db.query(sql2)
@@ -122,6 +129,32 @@ def create_user():
             sql = "insert into users (handle, fname, lname, password) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(hashed) + ");"
             print sql
             query = db.query(sql)
+
+            #create a chirp at signing
+            sql = "select id from users where handle = " + quoted(userid) + ";"
+            print sql
+
+
+
+            query = db.query(sql)
+
+            new_userid = query.dictresult()[0]['id']
+
+            print "new user id = "
+            print new_userid
+
+            # sql = "insert into chirps (chirper_id, chirp) values (" + to_char(   new_userid + ", 'Joined Chirp Today!')"
+            # print sql
+            sql2 = "xxx" + str(39) + "yyy"
+            print sql2
+
+            sql = "insert into chirps (chirper_id, chirp) values (" + str(new_userid) + ", 'Welcome me to Chirp!')"
+            print sql
+            db.query(sql)
+
+
+
+            # print "new user id = " + user_id
             return redirect('/login')
 
     except Exception, e:
