@@ -3,9 +3,20 @@ import traceback
 import pg
 db=pg.DB(dbname='chirp')
 
+import bcrypt
+
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask('MyApp')
+
+@app.route('/')
+def home():
+    try:
+        print session['userid']
+        return redirect('/profile')
+    except Exception, e:
+        print "not logged in"
+        return redirect('/login')
 
 @app.route('/profile')
 def profile():
@@ -30,22 +41,31 @@ def login():
     'login.html',
     title='Login')
 
+@app.route('/signup')
+def signup():
+    return render_template(
+    'signup.html',
+    title='Sign Up')
+
 @app.route('/check_pw', methods=['POST'])
 def check_password():
     userid = request.form['userid']
-    print 'this user tried to login: ' + userid
+    password = request.form['password']
+    print userid + ' tried to login with password ' + password
 
     sql = "select * from users where handle = '" + userid + "';"
     query = db.query(sql)
     print query.namedresult()
     print len(query.namedresult())
-
-    if len(query.namedresult()) == 1:
-        session['userid'] = userid
-        return redirect('/profile')
-    else:
-        print "userid and/or password is not correct.  please try again"
-        return redirect('/login')
+    for user in query.namedresult():
+        print 'encrypted password = ' + user.password
+        if len(query.namedresult()) == 1 and bcrypt.hashpw(password.encode('utf-8'), user.password) == user.password:
+            print "encrypted password was correct"
+            session['userid'] = userid
+            return redirect('/profile')
+        else:
+            print "userid and/or password is not correct.  please try again"
+            return redirect('/login')
 
     # try:
     #     session['userid'] = userid
@@ -56,6 +76,82 @@ def check_password():
     #     return "Error %s" % traceback.format_exc()
 
 
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    def quoted(s):
+        return "'" + s + "'"
+    comma = ","
+    try:
+        userid = request.form['userid']
+        password = request.form['password']
+        fname = request.form['fname']
+        lname = request.form['lname']
+        print 'userid = ' + userid
+        print 'password = ' + password
+        # check to see if user id already exists
+        sql = "select handle from users where handle = '" + userid + "'"
+        print sql
+        query = db.query(sql)
+        print query.namedresult()
+        print len(query.namedresult())
+
+        if len(query.namedresult()) == 1:
+            print "that userid is already taken"
+            # need to redirect user to an error page
+            return render_template(
+            'tryagain.html',
+            title='Create User')
+        else:
+            # need to create the new user and direct the user to login
+
+            # try to encrypt the password
+            binary_pw = password.encode('utf-8')
+            hashed = bcrypt.hashpw(binary_pw, bcrypt.gensalt())
+            print hashed
+
+            print "that userid is ok; adding to the database"
+            sql = "insert into users (handle, fname, lname, password) values (" + quoted(userid) + comma + quoted(fname) + comma + quoted(lname) + comma + quoted(hashed) + ");"
+            print sql
+            query = db.query(sql)
+            return redirect('/login')
+
+    except Exception, e:
+        print "something went wrong in /create_user route."
+        print traceback.format_exc()
+        return "Error %s" % traceback.format_exc()
+        return redirect('/login')
+
+
+
+# the test rouute was only used to encrypt passwords of users whose passwords were not already encrypted
+# @app.route('/test')
+# def test():
+#
+#     def quoted(s):
+#         return "'" + s + "'"
+#
+#     comma = ","
+#
+#     sql = "select * from users;"
+#     query = db.query(sql)
+#     print query.namedresult()
+#
+#     for user in query.namedresult():
+#         password =  user.password
+#         encrypted_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+#         print user.handle
+#         print password
+#         print encrypted_pw
+#         print "----------------------"
+#         # update users set password = 'xxx' where id=24;
+#         sql = "update users set password = " + quoted(encrypted_pw) + " where handle = " + quoted(user.handle)
+#         print sql
+#         db.query(sql)
+#
+#     return render_template(
+#     'tryagain.html',
+#     title='Create User')
+#   return redirect('/login')
 
 
 # ------------------------------------------------------------------------------------------------- #
