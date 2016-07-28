@@ -3,7 +3,7 @@ body {
      background-color: #DEDEDE;
 }
 .purple {
-     background-color: #C713FE;
+     background-color: #5e9d2f;
 }
 .blue {
      background-color: #4A90E2;
@@ -14,10 +14,8 @@ body {
 .light_gray {
      background-color: #DEDEDE;
 }
-
-
 .purple_text {
-     color: #C713FE;
+     color: #5e9d2f;
 }
 .blue_text {
      color: #4A90E2;
@@ -28,12 +26,20 @@ body {
 .light_gray_text {
      color: #DEDEDE;
 }
-
-
-
-
+.profile_photo {
+     border: 2px solid #9B9B9B;
+}
+.profile_label {
+     font-size: 0.8em;
+     text-transform: uppercase;
+}
+.profile_stats {
+     font-size: 1.15em;
+     font-weight: bold;
+     color: #4A90E2;
+}
 div {
-     border: 1px dotted #DDDDDD;
+     border: 1px dotted #CCCCCC;
 }
 .container {
      margin: auto;
@@ -43,4 +49,12 @@ div {
 }
 .bold {
      font-weight: bold;
+}
+.summary_box {
+     border: 0.25em solid #4A90E2;
+     border-radius: 0.5em;
+     padding: 1em;
+}
+.statistics {
+     padding-top: 1em;
 }

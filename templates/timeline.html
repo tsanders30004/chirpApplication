@@ -1,79 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-     <meta charset="utf-8">
-     <title>Timeline</title>
-     <link href="../static/animate.css" rel="stylesheet">
-     <link href="../static/bootstrap.min.css" rel="stylesheet">
-     <link href="../static/chirp.css" rel="stylesheet">
-</head>
-
-<body>
-     <div class="container">
-          <div class="row">
-               <div class="col-md-12 purple">
-                    <h1>Navigation Here...</h1>
-               </div>
-          </div>
-          <div class="row">
-               <!--
-               <div class="col-md-4">
-                    <div class="row">
-                         <div class="col-md-6">
-                              <img class="width_100" src="http://placehold.it/200x200">
-                         </div>
-                         <div class="col-md-6">
-                              <h3>Tim Sanders</h3>
-                              <h4>@tsanders</h4>
-                         </div>
-                    </div>
-                    <div class="row">
-                         <div class="col-md-4">
-                              <h4>CHIRPS</h4>
-                              <p class="blue_text">
-                                   {% for profile in profile_rows %}
-                                   {{profile.num_chirps}}
-                                   {% endfor %}
-                              </p>
-                         </div>
-                         <div class="col-md-4">
-                              <h4>FOLLOWING</h4>
-                              <p class="blue_text">
-                                   {% for profile in profile_rows %}
-                                   {{profile.num_following}}
-                                   {% endfor %}
-                              </p>
-                         </div>
-                         <div class="col-md-4">
-                              <h4>FOLLOWERS</h4>
-                              <p class="blue_text">
-                                   {% for profile in profile_rows %}
-                                   {{profile.num_being_followed}}
-                                   {% endfor %}
-                              </p>
-                         </div>
-                    </div>
-               </div> -->
-
-               <div class="col-md-6">
-                    <table class="table-striped table-bordered table-condensed width_100">
-                         {% for timeline in timeline_rows %}
-                         <tr>
-                              <td>
-                                   <p>{{timeline.fname}} {{timeline.lname}} @{{timeline.handle}}</p>
-                                   <p>{{timeline.chirp_date}} {{timeline.chirp}}</p>
-                              </td>
-                         </tr>
-                         {% endfor %}
-                    </table>
-               </div>
-               <div class="col-md-2">
-                    <p>where here?</p>
-               </div>
-          </div>
+{% extends "layout.html" %}
+{% block body %}
+<div class="row">
+     <div class="col-md-2">
+          xxx
      </div>
-
-     <script src="../static/jquery.js"></script>
-     <script src="../static/bootstrap.min.js"></script>
-</body>
-</html>
+     <div class="col-md-8">
+          <table class="table-striped table-bordered table-condensed width_100">
+               {% for timeline in timeline_rows %}
+               <tr>
+                    <td>
+                         <p>{{timeline.fname}} {{timeline.lname}} @{{timeline.handle}}</p>
+                         <p>{{timeline.chirp_date}} {{timeline.chirp}}</p>
+                    </td>
+               </tr>
+               {% endfor %}
+          </table>
+     </div>
+     <div class="col-md-2">
+          xxx
+     </div>
+</div>
+{% endblock %}
