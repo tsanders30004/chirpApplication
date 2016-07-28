@@ -72,7 +72,9 @@ def check_password():
                 return redirect('/profile')
             else:
                 print "encrypted password was not correct"
-                return redirect('/login')
+                return render_template(
+                'badlogin.html',
+                title='Incorrect Login')
 
     # try:
     #     session['userid'] = userid
