@@ -55,17 +55,24 @@ def check_password():
 
     sql = "select * from users where handle = '" + userid + "';"
     query = db.query(sql)
+
     print query.namedresult()
     print len(query.namedresult())
-    for user in query.namedresult():
-        print 'encrypted password = ' + user.password
-        if len(query.namedresult()) == 1 and bcrypt.hashpw(password.encode('utf-8'), user.password) == user.password:
-            print "encrypted password was correct"
-            session['userid'] = userid
-            return redirect('/profile')
-        else:
-            print "userid and/or password is not correct.  please try again"
-            return redirect('/login')
+
+    if len(query.namedresult()) == 0:
+        print "user does not exist"
+        return redirect('/login')
+    else:
+        print "user does exist"
+        for user in query.namedresult():
+            print 'encrypted password = ' + user.password
+            if bcrypt.hashpw(password.encode('utf-8'), user.password) == user.password:
+                print "encrypted password was correct"
+                session['userid'] = userid
+                return redirect('/profile')
+            else:
+                print "encrypted password was not correct"
+                return redirect('/login')
 
     # try:
     #     session['userid'] = userid
