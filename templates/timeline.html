@@ -5,6 +5,22 @@
           xxx
      </div>
      <div class="col-md-8">
+          <form action="/new_chirp" method="POST">
+               <label>What's happening?</label>
+               <input type="text" name="new_chirp">
+               <br>
+               <button class="btn btn-success" type="submit">Chirp</button>
+          </form>
+     </div>
+     <div class="col-md-2">
+          xxx
+     </div>
+</div>
+<div class="row">
+     <div class="col-md-2">
+          xxx
+     </div>
+     <div class="col-md-8">
           <table class="table-striped table-bordered table-condensed width_100">
                {% for timeline in timeline_rows %}
                <tr>

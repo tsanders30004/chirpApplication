@@ -9,6 +9,11 @@ from flask import Flask, render_template, request, redirect, session
 
 app = Flask('MyApp')
 
+def quoted(s):
+    return "'" + s + "'"
+
+comma = ","
+
 @app.route('/')
 def home():
     try:
@@ -91,6 +96,23 @@ def check_password():
     #     print traceback.format_exc()
     #     return "Error %s" % traceback.format_exc()
 
+@app.route('/new_chirp', methods=['POST'])
+def new_chirp():
+    new_chirp = request.form['new_chirp']
+    print session['userid']
+
+    print 'new chirp = ' + new_chirp;
+    print 'logged in user = ' + session['userid']
+
+    sql1 = "select id from users where handle = " + quoted(session['userid']) + ";"
+    print sql1
+    userid = db.query(sql1).dictresult()[0]["id"]
+    print userid
+
+    sql2 = "insert into chirps (chirper_id, chirp) values(" + str(userid) + ", " + quoted(new_chirp) + ");"
+    print 'sql2 = ' + sql2
+    db.query(sql2)
+    return redirect('/timeline')
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
