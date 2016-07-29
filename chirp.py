@@ -197,20 +197,18 @@ def search():
     search_list = request.form['search_str'].split()
     # print search_list
     db.query('DROP TABLE temp')
-    db.query('CREATE TABLE "public"."temp" ("id" serial, "handle" varchar, "name" varchar, "chirp" varchar, PRIMARY KEY ("id"));')
-
-
+    db.query('CREATE TABLE "public"."temp" ("handle" varchar, "name" varchar, "chirp" varchar)')
 
     for n in range(len(search_list)):
         print n
-        # sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id"
-        sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like " + quoted_percent(search_list[n].lower()) + "or lower(lname) like " + quoted_percent(search_list[n].lower()) + "or lower(handle) like " + quoted_percent(search_list[n].lower()) + "or lower(chirp) like " + quoted_percent(search_list[n].lower()) +";"
+
+        sql1 = "insert into temp select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like" + quoted_percent(search_list[n].lower()) + "or lower(lname) like " +  quoted_percent(search_list[n].lower()) + " or lower(handle) like " + quoted_percent(search_list[n].lower()) + "or lower(chirp) like " + quoted_percent(search_list[n].lower()) + ";"
 
         # print "search sql = " + sql1
         search_results = db.query(sql1)
-        print n
-        print search_list[n]
-        print search_results
+
+        sql2 = "select distinct * from temp;"
+        search_results = db.query(sql2)
 
     # print search_results
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
