@@ -187,6 +187,39 @@ def create_user():
 
 
 
+@app.route('/search')
+def search():
+    # print request.form["search_str"]
+
+    sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id"
+    print "search sql = " + sql1
+    search_results = db.query(sql1)
+    print search_results
+    return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
+
+
+@app.route('/add_follow', methods=['POST'])
+def add_follow():
+
+    user_to_follow = request.form['user_to_follow']
+    print user_to_follow
+
+    logged_in_user = session['userid']
+    print logged_in_user
+
+    sql = "insert into follows (follower_id, leader_id) values ((select id from users where users.handle = " + quoted(logged_in_user)+ "), (select id from users where users.handle = " + quoted(user_to_follow)+ "));"
+    print sql
+
+
+    try:
+        db.query(sql)
+        print "follow table was updated"
+        return redirect('/profile')
+    except Exception, e:
+        print "unique constraint violated; follow table not updated"
+        return redirect('/profile')
+
+
 # the test rouute was only used to encrypt passwords of users whose passwords were not already encrypted
 # @app.route('/test')
 # def test():

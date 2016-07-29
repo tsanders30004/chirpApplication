@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Search Results</h1>
+<table>
+     {% for search_row in search_results %}
+     <form action="/add_follow" method="POST">
+          <tr>
+               <td>{{search_row.handle}}</td>
+               <td>{{search_row.name}}</td>
+               <td>{{search_row.chirp}}</td>
+               <td><button class="btn btn-success" type="submit" name="user_to_follow" value="{{search_row.handle}}">Follow</button></td>
+          </tr>
+     </form>
+     {% endfor %}
+</table>
+{% endblock %}
