@@ -12,6 +12,9 @@ app = Flask('MyApp')
 def quoted(s):
     return "'" + s + "'"
 
+def quoted_percent(s):
+    return "'%" + s + "%'"
+
 comma = ","
 
 @app.route('/')
@@ -187,14 +190,29 @@ def create_user():
 
 
 
-@app.route('/search')
+@app.route('/search', methods=['POST'])
 def search():
-    # print request.form["search_str"]
+    # print "inside the /search route"
+    # print request.form['search_str']
+    search_list = request.form['search_str'].split()
+    # print search_list
+    db.query('DROP TABLE temp')
+    db.query('CREATE TABLE "public"."temp" ("id" serial, "handle" varchar, "name" varchar, "chirp" varchar, PRIMARY KEY ("id"));')
 
-    sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id"
-    print "search sql = " + sql1
-    search_results = db.query(sql1)
-    print search_results
+
+
+    for n in range(len(search_list)):
+        print n
+        # sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id"
+        sql1 = "select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like " + quoted_percent(search_list[n].lower()) + "or lower(lname) like " + quoted_percent(search_list[n].lower()) + "or lower(handle) like " + quoted_percent(search_list[n].lower()) + "or lower(chirp) like " + quoted_percent(search_list[n].lower()) +";"
+
+        # print "search sql = " + sql1
+        search_results = db.query(sql1)
+        print n
+        print search_list[n]
+        print search_results
+
+    # print search_results
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
 
 
