@@ -40,11 +40,11 @@
           </div>
      </div>
      <div class="col-md-6">
-          <table class="table-striped table-bordered table-condensed width_100">
+          <table class="table-striped table-condensed width_100 table_border">
                {% for chirp in chirp_rows %}
-               <tr>
+               <tr class="tr_border">
                     <td>
-                         <p class="blue_text bold">{{chirp_rows[0].fname}} {{chirp_rows[0].lname}} <span class="purple_text">@{{chirp_rows[0].handle}}</span></p>
+                         <p class="colorB_text bold">{{chirp_rows[0].fname}} {{chirp_rows[0].lname}} <span class="colorA_text">@{{chirp_rows[0].handle}}</span></p>
                          <p>{{chirp.chirp_date}} {{chirp.chirp}}</p>
                     </td>
                </tr>

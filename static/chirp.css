@@ -1,11 +1,10 @@
 body {
      font-family: Verdana;
-     background-color: #DEDEDE;
 }
-.purple {
+.colorA {
      background-color: #5e9d2f;
 }
-.blue {
+.colorB {
      background-color: #4A90E2;
 }
 .dark_gray {
@@ -14,10 +13,10 @@ body {
 .light_gray {
      background-color: #DEDEDE;
 }
-.purple_text {
+.colorA_text {
      color: #5e9d2f;
 }
-.blue_text {
+.colorB_text {
      color: #4A90E2;
 }
 .dark_gray_text {
@@ -38,9 +37,9 @@ body {
      font-weight: bold;
      color: #4A90E2;
 }
-div {
+/*div {
      border: 1px dotted #CCCCCC;
-}
+}*/
 .container {
      margin: auto;
 }
@@ -57,4 +56,14 @@ div {
 }
 .statistics {
      padding-top: 1em;
+}
+.search_row {
+     padding: 0.5em;
+     padding-right: 1em;
+}
+.table_border {
+     border: 2px solid gray;
+}
+.tr_border {
+     border: 1px solid  gray;
 }

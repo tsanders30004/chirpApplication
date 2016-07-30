@@ -52,9 +52,12 @@ def timeline():
 
 @app.route('/login')
 def login():
-    return render_template(
-    'login.html',
-    title='Login')
+    return render_template('login.html', title='Login')
+
+@app.route('/logout')
+def logout():
+    session['userid'] = ""
+    return render_template('login.html', title='Login')
 
 @app.route('/signup')
 def signup():
@@ -76,7 +79,7 @@ def check_password():
 
     if len(query.namedresult()) == 0:
         print "user does not exist"
-        return redirect('/login')
+        return redirect('/signup')
     else:
         print "user does exist"
         for user in query.namedresult():
@@ -192,10 +195,8 @@ def create_user():
 
 @app.route('/search', methods=['POST'])
 def search():
-    # print "inside the /search route"
-    # print request.form['search_str']
     search_list = request.form['search_str'].split()
-    # print search_list
+
     db.query('DROP TABLE temp')
     db.query('CREATE TABLE "public"."temp" ("handle" varchar, "name" varchar, "chirp" varchar)')
 
@@ -204,7 +205,6 @@ def search():
 
         sql1 = "insert into temp select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like" + quoted_percent(search_list[n].lower()) + "or lower(lname) like " +  quoted_percent(search_list[n].lower()) + " or lower(handle) like " + quoted_percent(search_list[n].lower()) + "or lower(chirp) like " + quoted_percent(search_list[n].lower()) + ";"
 
-        # print "search sql = " + sql1
         search_results = db.query(sql1)
 
         sql2 = "select distinct * from temp;"
