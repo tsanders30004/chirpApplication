@@ -29,24 +29,27 @@ def home():
 @app.route('/profile')
 def profile():
 
-    # query1 = db.query("select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where user_id=1;")
+    # is user logged in?
+    if len(session['userid']) == 0:
+        # user is not logged in; reroute.
+        return render_template('login.html', title='Login')
+
     sql1 = "select user_id, handle, fname, lname, num_chirps, num_following, num_being_followed from v_chirp_follow_summary where handle='" + session['userid'] + "'"
 
     query1 = db.query(sql1)
-    print "postgreSQL..."
-    print sql1
-    print query1
-    print query1.namedresult()
-    print query1.dictresult()[0]['handle']
-    # new_userid = query.dictresult()[0]['id']
-
 
     sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
     query2 = db.query(sql2)
+
     return render_template('profile.html', title='Profile', profile_rows=query1.namedresult(), chirp_rows=query2.namedresult())
 
 @app.route('/timeline')
 def timeline():
+    # is user logged in?
+    if len(session['userid']) == 0:
+        # user is not logged in; reroute.
+        return render_template('login.html', title='Login')
+        
     query1 = db.query("select chirper_id, chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
     return render_template('timeline.html', title='Timeline', profile_rows=query1.namedresult(), timeline_rows=query1.namedresult())
 
