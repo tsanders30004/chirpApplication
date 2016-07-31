@@ -10,6 +10,7 @@
      <link href="../static/animate.css" rel="stylesheet">
      <link href="../static/bootstrap.min.css" rel="stylesheet">
      <link href="../static/chirp.css" rel="stylesheet">
+     <link href="../static/formValidation.css" rel="stylesheet">
      <style type="text/css">
      /*body {
           background-image: url(../static/bg2.jpg);
@@ -41,7 +42,7 @@
                          </ul>
                          <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
                               <div class="form-group">
-                                   <input type="text" class="form-control" placeholder="Search" name="search_str">
+                                   <input type="text" class="form-control" placeholder="Search" name="search_str" required>
                               </div>
                               <button type="submit" class="btn btn-default">Submit</button>
                          </form>
@@ -62,8 +63,110 @@
                </div>
           </div>
 
+
+          <script>
+          $(document).ready(function() {
+              // Generate a simple captcha
+              function randomNumber(min, max) {
+                  return Math.floor(Math.random() * (max - min + 1) + min);
+              }
+              $('#captchaOperation').html([randomNumber(1, 100), '+', randomNumber(1, 200), '='].join(' '));
+
+              $('#basicBootstrapForm').formValidation({
+                  framework: 'bootstrap',
+                  icon: {
+                      valid: 'glyphicon glyphicon-ok',
+                      invalid: 'glyphicon glyphicon-remove',
+                      validating: 'glyphicon glyphicon-refresh'
+                  },
+                  fields: {
+                      firstName: {
+                          row: '.col-xs-4',
+                          validators: {
+                              notEmpty: {
+                                  message: 'The first name is required'
+                              }
+                          }
+                      },
+                      lastName: {
+                          row: '.col-xs-4',
+                          validators: {
+                              notEmpty: {
+                                  message: 'The last name is required'
+                              }
+                          }
+                      },
+                      username: {
+                          validators: {
+                              notEmpty: {
+                                  message: 'The username is required'
+                              },
+                              stringLength: {
+                                  min: 6,
+                                  max: 30,
+                                  message: 'The username must be more than 6 and less than 30 characters long'
+                              },
+                              regexp: {
+                                  regexp: /^[a-zA-Z0-9_\.]+$/,
+                                  message: 'The username can only consist of alphabetical, number, dot and underscore'
+                              }
+                          }
+                      },
+                      email: {
+                          validators: {
+                              notEmpty: {
+                                  message: 'The email address is required'
+                              },
+                              emailAddress: {
+                                  message: 'The input is not a valid email address'
+                              }
+                          }
+                      },
+                      password: {
+                          validators: {
+                              notEmpty: {
+                                  message: 'The password is required'
+                              },
+                              different: {
+                                  field: 'username',
+                                  message: 'The password cannot be the same as username'
+                              }
+                          }
+                      },
+                      gender: {
+                          validators: {
+                              notEmpty: {
+                                  message: 'The gender is required'
+                              }
+                          }
+                      },
+                      captcha: {
+                          validators: {
+                              callback: {
+                                  message: 'Wrong answer',
+                                  callback: function(value, validator, $field) {
+                                      var items = $('#captchaOperation').html().split(' '), sum = parseInt(items[0]) + parseInt(items[2]);
+                                      return value == sum;
+                                  }
+                              }
+                          }
+                      },
+                      agree: {
+                          validators: {
+                              notEmpty: {
+                                  message: 'You must agree with the terms and conditions'
+                              }
+                          }
+                      }
+                  }
+              });
+          });
+          </script>
+
           <!-- Script Files ************************************************************************************************* -->
           <script src="../static/jquery.js"></script>
           <script src="../static/bootstrap.min.js"></script>
+          <script src="../static/base.min.js"></script>
+          <script src="../static/helper.js"></script>
      </body>
      </html>

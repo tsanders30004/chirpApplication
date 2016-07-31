@@ -56,7 +56,7 @@ def timeline():
         # user is not logged in; reroute.
         return render_template('login.html', title='Login')
 
-    query1 = db.query("select chirper_id, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
+    query1 = db.query("select chirper_id, chirp_date, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date2, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
 
     print query1
 
@@ -206,8 +206,11 @@ def search():
 
     userid = session['userid']
 
+    if len(userid) == 0:
+        return redirect('/login')
+
     try:
-        sql1 = "DROP TABLE " + session['userid']
+        sql1 = "DROP TABLE " + userid
         db.query(sql1)
     except Exception, e:
         print "something went wrong trying to drop a temp table"
@@ -231,7 +234,7 @@ def search():
         search_results = db.query(sql2)
 
     try:
-        sql1 = "DROP TABLE " + session['userid']
+        sql1 = "DROP TABLE " + userid
         db.query(sql1)
     except Exception, e:
         print "something went wrong trying to drop a temp table"
