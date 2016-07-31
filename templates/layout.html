@@ -11,10 +11,10 @@
      <link href="../static/bootstrap.min.css" rel="stylesheet">
      <link href="../static/chirp.css" rel="stylesheet">
      <style type="text/css">
-     body {
-	background-image: url(../static/bg2.jpg);
-}
-	</style>
+     /*body {
+          background-image: url(../static/bg2.jpg);
+     }*/
+     </style>
 
      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -24,20 +24,20 @@
      <![endif]-->
 </head>
 <body>
-     <nav class="navbar navbar-default">
+     <nav class="navbar navbar-default" style="background-color: rgb(0, 166, 206);">
           <div class="container-fluid">
                <!-- Brand and toggle get grouped for better mobile display -->
                <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-                    <a class="navbar-brand" href="/profile">Chirp</a></div>
+                    <a class="navbar-brand" href="/profile"><img src="../static/chirp-mascot.png" width="50" height="50" style="margin-top: -0.45em;"></a></div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="defaultNavbar1">
                          <ul class="nav navbar-nav">
-                              <li class="active"><a href="/signup">Signup<span class="sr-only">(current)</span></a></li>
-                              <li><a href="/login">Login</a></li>
-                              <li><a href="/profile">Profile</a></li>
-                              <li><a href="/timeline">Timeline</a></li>
-                              <li><a href="/logout">Logout</a></li>
+                              <li><a href="/signup"><p class="nav_text">Signup</p><span class="sr-only">(current)</span></a></li>
+                              <li><a href="/login"><p class="nav_text">Login</p></a></li>
+                              <li><a href="/profile"><p class="nav_text">Profile</p></a></li>
+                              <li><a href="/timeline"><p class="nav_text">Timeline</p></a></li>
+                              <li><a href="/logout"><p class="nav_text">Logout</p></a></li>
                          </ul>
                          <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
                               <div class="form-group">

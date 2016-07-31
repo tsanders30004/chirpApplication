@@ -1,32 +1,30 @@
+* {
+     box-sizing: border-box;
+}
 body {
      font-family: Verdana;
+     background-color: rgb(153, 153, 153);
 }
-.colorA {
-     background-color: #5e9d2f;
+.light_bg {
+     background-color: rgb(153, 153, 153);
 }
-.colorB {
-     background-color: #4A90E2;
+.med_bg {
+     background-color: rgb(102, 102, 102);
 }
-.dark_gray {
-     background-color: #9B9B9B;
+.dark_bg {
+     background-color: rgb(0, 166, 206);
 }
-.light_gray {
-     background-color: #DEDEDE;
+.light_text {
+     color: rgb(153, 153, 153);
 }
-.colorA_text {
-     color: #5e9d2f;
+.med_text {
+     color: rgb(102, 102, 102);
 }
-.colorB_text {
-     color: #4A90E2;
-}
-.dark_gray_text {
-     color: #9B9B9B;
-}
-.light_gray_text {
-     color: #DEDEDE;
+.dark_text {
+     color: rgb(0, 166, 206);
 }
 .profile_photo {
-     border: 2px solid #9B9B9B;
+     border: 2px solid rgb(102, 102, 102);
 }
 .profile_label {
      font-size: 0.8em;
@@ -35,11 +33,8 @@ body {
 .profile_stats {
      font-size: 1.15em;
      font-weight: bold;
-     color: #4A90E2;
+     color: rgb(0, 166, 206);
 }
-/*div {
-     border: 1px dotted #CCCCCC;
-}*/
 .container {
      margin: auto;
 }
@@ -50,7 +45,14 @@ body {
      font-weight: bold;
 }
 .summary_box {
-     border: 0.25em solid #4A90E2;
+     border: 0.3em solid rgb(102, 102, 102);
+     border-radius: 0.5em;
+     padding: 1em;
+     /*background-color: rgb(153, 153, 153);*/
+     background-color: white;
+}
+.tweet_box {
+     border: 0.3em solid rgb(102, 102, 102);
      border-radius: 0.5em;
      padding: 1em;
 }
@@ -62,8 +64,22 @@ body {
      padding-right: 1em;
 }
 .table_border {
-     border: 2px solid gray;
+     border: 0.3em solid rgb(175, 64, 42);
+     border-radius: 0.5em;
 }
 .tr_border {
-     border: 1px solid  gray;
+     border: 1px solid  rgb(102, 102, 102);
+     background-color: #CCCCCC;
+}
+.nav_text {
+     color: #EFEFEF;
+     padding-top: 0;
+     padding-bottom: 0;
+}
+.nav_text:hover {
+     font-weight: bold;
+     color: white;
+}
+td {
+     padding: 0.5em;
 }
