@@ -42,10 +42,8 @@ def profile():
     query1 = db.query(sql1)
 
     # sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
-    sql2 = "select chirper_id, fname, lname, handle, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date2, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
+    sql2 = "select chirper_id, fname, lname, handle, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
     query2 = db.query(sql2)
-
-    print query2
 
     return render_template('profile.html', title='Profile', profile_rows=query1.namedresult(), chirp_rows=query2.namedresult())
 
@@ -56,10 +54,7 @@ def timeline():
         # user is not logged in; reroute.
         return render_template('login.html', title='Login')
 
-    query1 = db.query("select chirper_id, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
-
-    print query1
-
+    query1 = db.query("select chirper_id, chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
     return render_template('timeline.html', title='Timeline', profile_rows=query1.namedresult(), timeline_rows=query1.namedresult())
 
 @app.route('/login')
@@ -181,11 +176,13 @@ def create_user():
 
             new_userid = query.dictresult()[0]['id']
 
-            # print "new user id = "
-            # print new_userid
-            #
-            # sql2 = "xxx" + str(39) + "yyy"
-            # print sql2
+            print "new user id = "
+            print new_userid
+
+            # sql = "insert into chirps (chirper_id, chirp) values (" + to_char(   new_userid + ", 'Joined Chirp Today!')"
+            # print sql
+            sql2 = "xxx" + str(39) + "yyy"
+            print sql2
 
             sql = "insert into chirps (chirper_id, chirp) values (" + str(new_userid) + ", 'Welcome me to Chirp!')"
             print sql
@@ -204,38 +201,27 @@ def create_user():
 def search():
     search_list = request.form['search_str'].split()
 
+    print session['userid']
+
     userid = session['userid']
 
-    try:
-        sql1 = "DROP TABLE " + session['userid']
-        db.query(sql1)
-    except Exception, e:
-        print "something went wrong trying to drop a temp table"
-        print traceback.format_exc()
+    sql1 = "DROP TABLE " + session['userid']
+    sql2 = 'CREATE TABLE "public"."' + userid + '" ("handle" varchar, "name" varchar, "chirp" varchar)'
+    print sql1
+    print sql2
 
-    try:
-        sql2 = 'CREATE TABLE "public"."' + userid + '" ("handle" varchar, "name" varchar, "chirp" varchar)'
-        db.query(sql2)
-    except Exception, e:
-        print "something went wrong trying to create a temp table"
-        print traceback.format_exc()
+    db.query('DROP TABLE temp')
+    db.query('CREATE TABLE "public"."temp" ("handle" varchar, "name" varchar, "chirp" varchar)')
 
     for n in range(len(search_list)):
         print n
 
-        sql1 = "insert into " + userid + " select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like $1 or lower(lname) like $1 or lower(handle) like $1 or lower(chirp) like $1"
+        sql1 = "insert into temp select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like $1 or lower(lname) like $1 or lower(handle) like $1 or lower(chirp) like $1"
 
         search_results = db.query(sql1, like_percent(search_list[n].lower()))
 
-        sql2 = "select distinct * from " + userid + ";"
+        sql2 = "select distinct * from temp;"
         search_results = db.query(sql2)
-
-    try:
-        sql1 = "DROP TABLE " + session['userid']
-        db.query(sql1)
-    except Exception, e:
-        print "something went wrong trying to drop a temp table"
-        print traceback.format_exc()
 
     # print search_results
     return render_template('search_results.html', title='Show Search Results', search_results = search_results.namedresult())
