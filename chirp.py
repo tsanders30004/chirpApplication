@@ -15,6 +15,9 @@ def quoted(s):
 def quoted_percent(s):
     return "'%" + s + "%'"
 
+def like_percent(s):
+    return "%" + s + "%"
+
 comma = ","
 
 @app.route('/')
@@ -38,7 +41,8 @@ def profile():
 
     query1 = db.query(sql1)
 
-    sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
+    # sql2 = "select chirper_id, fname, lname, handle, chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
+    sql2 = "select chirper_id, fname, lname, handle, to_char(chirp_date, 'MM/DD/YYYY: ') as chirp_date, chirp from chirps join users on chirper_id = users.id where handle='" + session['userid'] + "' order by chirp_date desc;"
     query2 = db.query(sql2)
 
     return render_template('profile.html', title='Profile', profile_rows=query1.namedresult(), chirp_rows=query2.namedresult())
@@ -49,7 +53,7 @@ def timeline():
     if len(session['userid']) == 0:
         # user is not logged in; reroute.
         return render_template('login.html', title='Login')
-        
+
     query1 = db.query("select chirper_id, chirp_date, chirp, fname, lname, handle from chirps left join users on chirper_id = users.id where chirper_id in (select leader_id from follows where follower_id = 4) or chirper_id = 4 order by chirp_date desc;")
     return render_template('timeline.html', title='Timeline', profile_rows=query1.namedresult(), timeline_rows=query1.namedresult())
 
@@ -74,8 +78,8 @@ def check_password():
     password = request.form['password']
     print userid + ' tried to login with password ' + password
 
-    sql = "select * from users where handle = '" + userid + "';"
-    query = db.query(sql)
+    sql = "select * from users where handle = $1"
+    query = db.query(sql, userid)
 
     print query.namedresult()
     print len(query.namedresult())
@@ -118,9 +122,11 @@ def new_chirp():
     userid = db.query(sql1).dictresult()[0]["id"]
     print userid
 
-    sql2 = "insert into chirps (chirper_id, chirp) values(" + str(userid) + ", " + quoted(new_chirp) + ");"
+    # sql2 = "insert into chirps (chirper_id, chirp) values(" + str(userid) + ", " + quoted(new_chirp) + ");"
+    sql2 = "insert into chirps (chirper_id, chirp) values($1, $2)"
+
     print 'sql2 = ' + sql2
-    db.query(sql2)
+    db.query(sql2, str(userid), new_chirp)
     return redirect('/timeline')
 
 @app.route('/create_user', methods=['POST'])
@@ -136,9 +142,10 @@ def create_user():
         print 'userid = ' + userid
         print 'password = ' + password
         # check to see if user id already exists
-        sql = "select handle from users where handle = '" + userid + "'"
+        # sql = "select handle from users where handle = '" + userid + "'"
+        sql = "select handle from users where handle = $1"
         print sql
-        query = db.query(sql)
+        query = db.query(sql, userid)
         print query.namedresult()
         print len(query.namedresult())
 
@@ -161,11 +168,9 @@ def create_user():
             print sql
             query = db.query(sql)
 
-            #create a chirp at signing
+            #create a chirp at signin
             sql = "select id from users where handle = " + quoted(userid) + ";"
             print sql
-
-
 
             query = db.query(sql)
 
@@ -183,8 +188,6 @@ def create_user():
             print sql
             db.query(sql)
 
-
-
             # print "new user id = " + user_id
             return redirect('/login')
 
@@ -193,8 +196,6 @@ def create_user():
         print traceback.format_exc()
         return "Error %s" % traceback.format_exc()
         return redirect('/login')
-
-
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -206,9 +207,9 @@ def search():
     for n in range(len(search_list)):
         print n
 
-        sql1 = "insert into temp select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like" + quoted_percent(search_list[n].lower()) + "or lower(lname) like " +  quoted_percent(search_list[n].lower()) + " or lower(handle) like " + quoted_percent(search_list[n].lower()) + "or lower(chirp) like " + quoted_percent(search_list[n].lower()) + ";"
+        sql1 = "insert into temp select handle, fname || ' ' || lname as name, chirp from users left join chirps on users.id = chirps.chirper_id where lower(fname) like $1 or lower(lname) like $1 or lower(handle) like $1 or lower(chirp) like $1"
 
-        search_results = db.query(sql1)
+        search_results = db.query(sql1, like_percent(search_list[n].lower()))
 
         sql2 = "select distinct * from temp;"
         search_results = db.query(sql2)
@@ -229,7 +230,6 @@ def add_follow():
     sql = "insert into follows (follower_id, leader_id) values ((select id from users where users.handle = " + quoted(logged_in_user)+ "), (select id from users where users.handle = " + quoted(user_to_follow)+ "));"
     print sql
 
-
     try:
         db.query(sql)
         print "follow table was updated"
@@ -237,85 +237,6 @@ def add_follow():
     except Exception, e:
         print "unique constraint violated; follow table not updated"
         return redirect('/profile')
-
-
-# the test rouute was only used to encrypt passwords of users whose passwords were not already encrypted
-# @app.route('/test')
-# def test():
-#
-#     def quoted(s):
-#         return "'" + s + "'"
-#
-#     comma = ","
-#
-#     sql = "select * from users;"
-#     query = db.query(sql)
-#     print query.namedresult()
-#
-#     for user in query.namedresult():
-#         password =  user.password
-#         encrypted_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-#         print user.handle
-#         print password
-#         print encrypted_pw
-#         print "----------------------"
-#         # update users set password = 'xxx' where id=24;
-#         sql = "update users set password = " + quoted(encrypted_pw) + " where handle = " + quoted(user.handle)
-#         print sql
-#         db.query(sql)
-#
-#     return render_template(
-#     'tryagain.html',
-#     title='Create User')
-#   return redirect('/login')
-
-
-# ------------------------------------------------------------------------------------------------- #
-# @app.route('/add', methods=['POST'])
-# def add():
-#     newtask = request.form['newtask']
-#     sql_str = "insert into tasks (task) values ('" + newtask + "');"
-#     print sql_str
-#     db.query(sql_str)
-#     return redirect('/')
-#
-# @app.route('/complete', methods=['POST'])
-# def complete():
-#     my_tasks = request.form
-#     print "tasks"
-#     print my_tasks
-#
-#     # need to find out if it is complete or delete
-#
-#     for t in my_tasks:
-#         if t == "complete":
-#             mode = "complete"
-#         elif t == "delete":
-#             mode = "delete"
-#
-#     print mode
-#
-#     if mode == "complete":
-#         for t in my_tasks:
-#             # print "task"
-#             # print t
-#             sql = "update tasks set complete=true where id=" + t
-#             # print "sql"
-#             # print sql
-#             if t != "complete":
-#                 db.query(sql)
-#
-#     if mode == "delete":
-#         for t in my_tasks:
-#             print "task"
-#             print t
-#             sql = "delete from tasks where id=" + t
-#             print "sql"
-#             print sql
-#             if t != "delete":
-#                 db.query(sql)
-#
-#     return redirect('/')
 
 app.secret_key = 'CSF686CCF85C6FRTCHQDBJDXHBHC1G478C86GCFTDCR'
 
