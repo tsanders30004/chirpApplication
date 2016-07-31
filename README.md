@@ -25,5 +25,10 @@
 
 
 ## What I Learned
-* postgreSQL
-** asdasd
+* postgreSQL:  I have used MySQL before, but never postgreSQL.  There are many similarities; however there are minor differences for things such as date formatting and managing tables, views, etc.  (Example:  The commands in MySQL for displaying the list of databases, showing a table structure, etc., are completely different that this in postgreSQL).
+* Python:  Previously, I have only used PHP to accessing backend databases.
+* GET and POST methods
+* The importance of a clearly defined and comprehensive route map.  (For the project, I will write no code until this map is 100% complete.)
+* The importance of a properly normalized SQL database.
+
+## Link to GutHub (https://github.com/tsanders30004/chirpApplication)
